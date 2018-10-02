@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+
+    <div class="container my-4" id="image_holder">
+
+    </div>
+
+    <div class="container my-4">
+        <button class="btn btn-primary" id="mem">Memorise</button>
+        <button class="btn btn-danger" id="return">return</button>
+    </div>
+
+</div>
+
+
+<script>
+    image_holder = document.querySelector("#image_holder");
+
+    mx = 10;
+    my = 10;
+    for (i = 0 ; i < mx ; i ++){
+        str_to_be_added = `<div class="row">`;
+        for (j = 0 ; j < my ; j++){
+            str_to_be_added += `<img src="blue64.jpg" id="${i}_${j}">`;
+        }
+        str_to_be_added += `</div>`;
+        image_holder.innerHTML +=str_to_be_added;
+    }
+    for(i = 0 ; i < mx ; i++){
+        for (j = 0 ; j < my ; j ++){
+            a = document.getElementById(`${i}_${j}`);
+            a.onclick = function () {
+                if (this.getAttribute("src") == "green64.jpg"){
+                    this.setAttribute("src", "blue64.jpg");
+                }else{
+                    this.setAttribute("src", "green64.jpg");
+                }
+            }
+        }
+    }
+
+    mem = document.getElementById("mem");
+    ret = document.getElementById("return");
+
+    arr = {};
+
+    for(i = 0 ; i < mx ; i ++){
+        for(j = 0 ; j < my ; j++){
+            for(x = 0  ; x < mx ; x++){
+                for (y = 0  ; y < my ; y ++){
+                    if(!((i==x)&&(j==y))){
+                        arr[`${i}_${j}_${x}_${y}`] = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    function getIsOnOrOff(x, y){
+        a = document.getElementById(`${x}_${y}`);
+        if (a.getAttribute("src") == "blue64.jpg"){
+            return 0;
+        }
+        return 1;
+    }
+
+    mem.onclick = function () {
+        for(i = 0 ; i < mx ; i ++){
+            for(j = 0 ; j < my ; j++){
+                for(x = 0 ; x < mx ; x++){
+                    for (y = 0  ; y < my ; y ++){
+                        if(!((i==x)&&(j==y))){
+                            arr[`${i}_${j}_${x}_${y}`] += (2 * getIsOnOrOff(i,j) - 1) * (2 * getIsOnOrOff(x,y) - 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function turnOnOrOf(x,y,t){
+        a = document.getElementById(`${x}_${y}`);
+        if (t){
+            a.setAttribute("src", "green64.jpg");
+        }else{
+            a.setAttribute("src", "blue64.jpg");
+        }
+    }
+
+
+    function getOthersForOne(i, j){
+        sum = 0;
+        for(x = 0 ; x < mx ; x++){
+            for (y = 0 ; y < my ; y ++){
+                if (!((x==i) && (y==j))){
+                    sum += arr[`${i1}_${j1}_${x1}_${y1}`] * getIsOnOrOff(x,y);
+                }
+            }
+        }
+        return sum;
+    }
+    ret.onclick = function () {
+        check = true;
+        while (check){
+            check = false;
+            for (i = 0 ; i < mx ; i ++) {
+                for(j = 0 ; j < my ; j++){
+                    sum = 0;
+                    for(x = 0 ; x < mx ; x++){
+                        for (y = 0 ; y < my ; y ++){
+                            if (!((x==i) && (y==j))){
+                                sum += arr[`${i}_${j}_${x}_${y}`] * getIsOnOrOff(x,y);
+                            }
+                        }
+                    }
+                    if(getIsOnOrOff(i,j)){
+                        if(sum<0){
+                            check = true;
+                            turnOnOrOf(i,j,0);
+                        }
+                    }else{
+                        if(sum>0){
+                            check = true;
+                            turnOnOrOf(i,j,1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</body>
+</html>
